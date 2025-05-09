@@ -1,0 +1,25 @@
+{
+  "package_name": {
+    "Fixed": "קבועה",
+    "Yellow Accumulation": "צבירה ל-Yellow",
+    "Day": "יום",
+    "Night": "לילה",
+    "Savings": "חוסכים",
+    "Work From Home": "עובדים מהבית",
+    "Family Savings": "חסכון למשפחה",
+    "Hot": "hot",
+    "24/7": "24/7",
+    "Power": "פאוור",
+    "Nightlife": "חיות לילה",
+    "Hi-Tech": "הייטק"
+  },
+  "vendor": {
+    "PazGaz": "פזגז",
+    "Bezeq": "בזק",
+    "Cellcom": "סלקום",
+    "HOT": "הוט",
+    "AmisraGaz": "אמישראגז",
+    "Partner": "פרטנר",
+    "Electra": "אלקטרה"
+  }
+}

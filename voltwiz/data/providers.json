@@ -1,0 +1,144 @@
+{
+  "providers": [
+    {
+      "name": "Fixed",
+      "vendor": "PazGaz",
+      "discount_pct": 6,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Yellow Accumulation",
+      "vendor": "PazGaz",
+      "discount_pct": 10,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Fixed",
+      "vendor": "Bezeq",
+      "discount_pct": 6,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Day",
+      "vendor": "Bezeq",
+      "discount_pct": 15,
+      "hours": [7, 17],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Night",
+      "vendor": "Bezeq",
+      "discount_pct": 20,
+      "hours": [23, 7],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Savings",
+      "vendor": "Cellcom",
+      "discount_pct": 5,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Work From Home",
+      "vendor": "Cellcom",
+      "discount_pct": 15,
+      "hours": [7, 17],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Night",
+      "vendor": "Cellcom",
+      "discount_pct": 20,
+      "hours": [23, 7],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Family Savings",
+      "vendor": "Cellcom",
+      "discount_pct": 18,
+      "hours": [14, 20],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Hot",
+      "vendor": "HOT",
+      "discount_pct": 7,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "24/7",
+      "vendor": "HOT",
+      "discount_pct": 5,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Night",
+      "vendor": "HOT",
+      "discount_pct": 20,
+      "hours": [23, 7],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Day",
+      "vendor": "HOT",
+      "discount_pct": 15,
+      "hours": [7, 17],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Power",
+      "vendor": "AmisraGaz",
+      "discount_pct": 6,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Fixed",
+      "vendor": "Partner",
+      "discount_pct": 5,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Work From Home",
+      "vendor": "Partner",
+      "discount_pct": 15,
+      "hours": [7, 17],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Nightlife",
+      "vendor": "Partner",
+      "discount_pct": 20,
+      "hours": [23, 7],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Power",
+      "vendor": "Electra",
+      "discount_pct": 6.5,
+      "hours": null,
+      "requires_smart_meter": false
+    },
+    {
+      "name": "Hi-Tech",
+      "vendor": "Electra",
+      "discount_pct": 10,
+      "hours": [17, 23],
+      "requires_smart_meter": true
+    },
+    {
+      "name": "Night",
+      "vendor": "Electra",
+      "discount_pct": 20,
+      "hours": [23, 7],
+      "requires_smart_meter": true
+    }
+  ]
+}
