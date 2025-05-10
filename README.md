@@ -1,6 +1,8 @@
 # VoltWiz - Electricity Provider Recommendation Bot
 
-A WhatsApp bot that helps users find the best electricity provider based on their needs and usage patterns. The bot uses Twilio's WhatsApp Business API to interact with users, collect their preferences, and provide personalized recommendations.
+![VoltWiz Logo](docs/voltwiz_logo.png)
+
+A Telegram bot that helps users find the best electricity provider based on their needs and usage patterns. The bot interact with users, collect their preferences, and provide personalized recommendations.
 
 ## Features
 
@@ -28,7 +30,6 @@ A WhatsApp bot that helps users find the best electricity provider based on thei
    - Next steps for the user
 
 ## Installation
-
 ```bash
 pip install uv
 ```
@@ -58,7 +59,7 @@ uv pip install -r requirements.txt
 python run.py server --host 0.0.0.0 --port 5000 --debug
 
 # Or using Python
-python -m voltwiz.app
+python -m app
 ```
 
 ### Running the CLI Interface
@@ -68,7 +69,7 @@ python -m voltwiz.app
 python run.py cli
 
 # Or using Python
-python -m voltwiz.utils.cli
+python -m utils.cli
 ```
 
 

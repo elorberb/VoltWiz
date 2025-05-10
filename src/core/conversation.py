@@ -6,12 +6,13 @@ class ConversationState(Enum):
     Enum representing the different states of a conversation.
     """
     INITIAL = 0
-    ASKING_SMART_METER = 1
-    ASKING_PRIORITY = 2
-    ASKING_DISCOUNT_START = 3
-    ASKING_DISCOUNT_END = 4
-    ASKING_MIN_DISCOUNT = 5
-    COMPLETED = 6
+    ASKING_VENDOR = 1
+    ASKING_SMART_METER = 2
+    ASKING_DISCOUNT_TYPE = 3
+    ASKING_DISCOUNT_START = 4
+    ASKING_DISCOUNT_END = 5
+    ASKING_MIN_DISCOUNT = 6
+    COMPLETED = 7
 
 class UserState:
     """
@@ -19,10 +20,11 @@ class UserState:
     """
     def __init__(self):
         self.state = ConversationState.INITIAL
+        self.vendor = None  # "hot", "amisragaz", or "none"
         self.has_smart_meter = None
-        self.priority = None  # "max_discount" or "time_specific"
-        self.discount_window = None  # Tuple of (start_hour, end_hour)
-        self.min_discount_pct = 0.0  # Default to 0% minimum discount
+        self.discount_type = None  # "all_day" or "specific_hours"
+        self.discount_window = None  # List of [start_hour, end_hour]
+        self.min_discount_pct = 0.0
 
 class ConversationHandler:
     """
@@ -58,31 +60,35 @@ class ConversationHandler:
         state = self.get_user_state(user_id)
 
         if state.state == ConversationState.INITIAL:
+            state.state = ConversationState.ASKING_VENDOR
+            return ("האם אתם לקוחות של אחת מהחברות הבאות?\n"
+                   "1) HOT\n"
+                   "2) אמישראגז\n"
+                   "3) אף אחת מהן")
+
+        elif state.state == ConversationState.ASKING_VENDOR:
             state.state = ConversationState.ASKING_SMART_METER
-            return "Do you have (or can install) a smart meter? (yes/no)"
+            return "האם יש לכם (או תוכלו להתקין) מונה חכם? (כן/לא)"
 
         elif state.state == ConversationState.ASKING_SMART_METER:
-            state.state = ConversationState.ASKING_PRIORITY
-            return ("What's most important to you?\n"
-                    "1) Highest % discount\n"
-                    "2) Discount during specific hours\n"
-                    "Enter 1 or 2:")
+            state.state = ConversationState.ASKING_DISCOUNT_TYPE
+            return "האם אתם מעדיפים הנחה:\n1) לאורך כל היום\n2) בשעות ספציפיות"
 
-        elif state.state == ConversationState.ASKING_PRIORITY:
-            if state.priority == "time_specific":
+        elif state.state == ConversationState.ASKING_DISCOUNT_TYPE:
+            if state.discount_type == "specific_hours":
                 state.state = ConversationState.ASKING_DISCOUNT_START
-                return "What hour would you like your discount to start? (0-23)"
+                return "באיזו שעה תרצו שההנחה תתחיל? (0-23)"
             else:
                 state.state = ConversationState.ASKING_MIN_DISCOUNT
-                return "What is your minimum acceptable discount percentage? (e.g., 10)"
+                return "מה אחוז ההנחה המינימלי שאתם מחפשים? (הזינו מספר)"
 
         elif state.state == ConversationState.ASKING_DISCOUNT_START:
             state.state = ConversationState.ASKING_DISCOUNT_END
-            return "What hour would you like your discount to end? (0-23)"
+            return "באיזו שעה תרצו שההנחה תסתיים? (0-23)"
 
         elif state.state == ConversationState.ASKING_DISCOUNT_END:
             state.state = ConversationState.ASKING_MIN_DISCOUNT
-            return "What is your minimum acceptable discount percentage? (e.g., 10)"
+            return "מה אחוז ההנחה המינימלי שאתם מחפשים? (הזינו מספר)"
 
         elif state.state == ConversationState.ASKING_MIN_DISCOUNT:
             state.state = ConversationState.COMPLETED
@@ -101,68 +107,76 @@ class ConversationHandler:
         """
         state = self.get_user_state(user_id)
 
-        if state.state == ConversationState.ASKING_SMART_METER:
-            answer_lower = answer.lower()
-            if answer_lower in ['yes', 'y', 'true', 'yeah', '1']:
-                state.has_smart_meter = True
+        if state.state == ConversationState.ASKING_VENDOR:
+            try:
+                choice = int(answer)
+                if choice == 1:
+                    state.vendor = "hot"
+                elif choice == 2:
+                    state.vendor = "amisragaz"
+                elif choice == 3:
+                    state.vendor = "none"
+                else:
+                    return "אנא הזינו מספר בין 1 ל-3."
                 return self.get_next_question(user_id)
-            elif answer_lower in ['no', 'n', 'false', 'nope', '0']:
-                state.has_smart_meter = False
-                return self.get_next_question(user_id)
-            else:
-                return "I didn't understand that. Please answer 'yes' or 'no' if you have a smart meter."
+            except ValueError:
+                return "אנא הזינו מספר בין 1 ל-3."
 
-        elif state.state == ConversationState.ASKING_PRIORITY:
-            answer = answer.strip()
-            if answer == "1":
-                state.priority = "max_discount"
-                return self.get_next_question(user_id)
-            elif answer == "2":
-                state.priority = "time_specific"
-                return self.get_next_question(user_id)
+        elif state.state == ConversationState.ASKING_SMART_METER:
+            answer = answer.lower()
+            if answer in ['כן', 'yes', 'y', 'true']:
+                state.has_smart_meter = True
+            elif answer in ['לא', 'no', 'n', 'false']:
+                state.has_smart_meter = False
             else:
-                return "Please enter either 1 (for highest discount) or 2 (for time-specific discount)."
+                return "לא הבנתי. אנא ענו 'כן' או 'לא' אם יש לכם מונה חכם."
+            return self.get_next_question(user_id)
+
+        elif state.state == ConversationState.ASKING_DISCOUNT_TYPE:
+            try:
+                choice = int(answer)
+                if choice == 1:
+                    state.discount_type = "all_day"
+                elif choice == 2:
+                    state.discount_type = "specific_hours"
+                else:
+                    return "אנא הזינו 1 (להנחה לאורך כל היום) או 2 (להנחה בשעות ספציפיות)."
+                return self.get_next_question(user_id)
+            except ValueError:
+                return "אנא הזינו 1 (להנחה לאורך כל היום) או 2 (להנחה בשעות ספציפיות)."
 
         elif state.state == ConversationState.ASKING_DISCOUNT_START:
             try:
-                start_hour = int(answer.strip())
-                if 0 <= start_hour <= 23:
-                    # Store temporarily until we get the end hour
-                    state.discount_window = (start_hour, None)
+                hour = int(answer)
+                if 0 <= hour <= 23:
+                    state.discount_window = [hour]
                     return self.get_next_question(user_id)
                 else:
-                    return "Please enter a valid hour between 0 and 23."
+                    return "אנא הזינו שעה תקינה בין 0 ל-23."
             except ValueError:
-                return "Please enter a valid hour between 0 and 23."
+                return "אנא הזינו שעה תקינה בין 0 ל-23."
 
         elif state.state == ConversationState.ASKING_DISCOUNT_END:
             try:
-                end_hour = int(answer.strip())
-                if 0 <= end_hour <= 23:
-                    # Complete the discount window tuple
-                    start_hour = state.discount_window[0]
-                    state.discount_window = (start_hour, end_hour)
+                hour = int(answer)
+                if 0 <= hour <= 23:
+                    state.discount_window.append(hour)
                     return self.get_next_question(user_id)
                 else:
-                    return "Please enter a valid hour between 0 and 23."
+                    return "אנא הזינו שעה תקינה בין 0 ל-23."
             except ValueError:
-                return "Please enter a valid hour between 0 and 23."
+                return "אנא הזינו שעה תקינה בין 0 ל-23."
 
         elif state.state == ConversationState.ASKING_MIN_DISCOUNT:
             try:
-                min_discount = float(answer.strip())
-                if min_discount < 0:
-                    return "Minimum discount percentage cannot be negative. Please enter a valid percentage."
-                if min_discount > 100:
-                    return "Discount percentage cannot exceed 100%. Please enter a valid percentage."
-                state.min_discount_pct = min_discount
-                return self.get_next_question(user_id)
-            except ValueError:
-                # If the user doesn't enter anything or enters an invalid value, default to 0
-                if not answer.strip():
-                    state.min_discount_pct = 0.0
+                discount = float(answer)
+                if discount >= 0:
+                    state.min_discount_pct = discount
                     return self.get_next_question(user_id)
-                return "Please enter a valid discount percentage (e.g., 10) or leave empty for no minimum."
+                else:
+                    return "אנא הזינו אחוז הנחה חיובי."
+            except ValueError:
+                return "אנא הזינו מספר תקין לאחוז ההנחה."
 
         return None
 

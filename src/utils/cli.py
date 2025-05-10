@@ -1,4 +1,5 @@
 from core.calculator import ProviderCalculator
+from core.conversation import ConversationHandler
 
 def get_user_preferences():
     """
@@ -34,20 +35,16 @@ def run_cli_conversation():
     """
     Run the CLI interface.
     """
-    # Initialize the calculator
-    calculator = ProviderCalculator()
+    handler = ConversationHandler()
+    user_id = "cli_user"
     
-    # Get user preferences
-    print("Welcome to the Electricity Provider Recommendation Bot!")
-    user_prefs = get_user_preferences()
-    
-    # Get recommendation
-    provider = calculator.get_recommendation(user_prefs)
-    
-    # Display recommendation
-    print("\nBased on your preferences:")
-    if provider:
-        recommendation = calculator.format_recommendation(provider, user_prefs)
-        print(recommendation)
-    else:
-        print("Sorry, we couldn't find any suitable providers based on your requirements.")
+    while not handler.is_conversation_complete(user_id):
+        question = handler.get_next_question(user_id)
+        print(question)
+        answer = input("> ")
+        response = handler.process_answer(user_id, answer)
+        if response:
+            print(response)
+
+if __name__ == "__main__":
+    run_cli_conversation()
