@@ -1,19 +1,19 @@
 # VoltWiz - Electricity Provider Recommendation Bot
 
-![VoltWiz Logo](docs/voltwiz_logo.png)
-
-A Telegram bot that helps users find the best electricity provider based on their needs and usage patterns. The bot interact with users, collect their preferences, and provide personalized recommendations.
+A Telegram bot that helps users find the best electricity provider based on their needs and usage patterns. The bot interacts with users, collects their preferences, and provides personalized recommendations.
 
 ## Features
 
-- Interactive conversation flow via WhatsApp
+- Interactive conversation flow via Telegram
 - Smart provider matching based on user requirements
 - Preference-based recommendations (highest discount or time-specific discount)
 - Detailed recommendation with plan details and next steps
+- Support for both polling and webhook modes
+- CLI interface for testing without Telegram
 
 ## How It Works
 
-1. **User Initiates Conversation**: The user sends a message to the WhatsApp number.
+1. **User Initiates Conversation**: The user sends a `/start` command to the Telegram bot.
 2. **Bot Asks Questions**: The bot asks a series of questions about the user's preferences:
    - Whether they have a smart meter
    - What's most important to them (highest discount or time-specific discount)
@@ -50,26 +50,55 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
+## Setting Up Telegram Bot
+
+1. **Create a Telegram Bot**:
+   - Open Telegram and search for the "BotFather" (@BotFather)
+   - Send the `/newbot` command and follow the instructions
+   - BotFather will give you a token for your new bot
+   - Copy this token to your `.env` file as `TELEGRAM_BOT_TOKEN`
+
+2. **Configure Environment Variables**:
+   - Create a `.env` file in the project root
+   - Add your Telegram bot token:
+   ```
+   TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+   ```
+
+3. **Test Your Bot Setup**:
+   - Run the test script to verify your bot token is working:
+   ```bash
+   python test_bot.py
+   ```
+   - If successful, you'll see your bot's information
+   - If there's an error, check your token and try again
+
 ## Usage
 
-### Running the Web Server
+### Running the Telegram Bot
+
+The simplest way to run the bot is in polling mode:
 
 ```bash
-# Using the command-line interface
-python run.py server --host 0.0.0.0 --port 5000 --debug
-
-# Or using Python
-python -m app
+python run_bot.py
 ```
 
-### Running the CLI Interface
+This will start the bot and it will respond to messages sent to it on Telegram.
+
+### Available Commands
+
+Once the bot is running, you can interact with it using these commands:
+
+- `/start` - Start the bot and get a welcome message
+- `/help` - Show help information
+- `/recommend` - Get a simple provider recommendation
+
+### Testing Without Telegram
+
+You can also test the recommendation system without using Telegram:
 
 ```bash
-# Using the command-line interface
-python run.py cli
-
-# Or using Python
-python -m utils.cli
+python -m src.utils.cli
 ```
 
 
